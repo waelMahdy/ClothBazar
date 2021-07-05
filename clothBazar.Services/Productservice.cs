@@ -35,8 +35,7 @@ namespace clothBazar.Services
             {
                 
                return (int)context.Products.Max(x => x.Price);
-             
-              
+                       
             }
         }
 
