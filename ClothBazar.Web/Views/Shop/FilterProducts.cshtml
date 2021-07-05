@@ -1,0 +1,101 @@
+﻿@model FilterProductsViewModel
+@{ var DefaultImageURL = "/Content/images/system/placeholder-image.png"; }
+
+
+
+<div class="product-content product-threecolumn product-slidebar clearfix">
+    <ul class="product style2 sd1">
+        @foreach (var product in Model.products)
+        {
+            var ImageURL = string.IsNullOrEmpty(product.ImageURL) ? DefaultImageURL : product.ImageURL;
+            <li class="product-item">
+                <div class="product-thumb clearfix">
+                    <br />
+                    <a href="@Url.Action("Details","Product",new {ID=product.ID })">
+                        <img src="@ImageURL" alt="image" style="height:35vh">
+                    </a>
+
+                </div>
+                <div class="product-info clearfix">
+                    <br />
+                    <span class="product-title">@product.Name</span>
+                    <div class="price">
+                        <ins>
+                            <span class="amount">$@product.Price</span>
+                        </ins>
+                    </div>
+                </div>
+                <div class="add-to-cart text-center">
+                    <a href="#" class="ProductAddToCart" data-id="@product.ID">ADD TO CART</a>
+                </div>
+                <a href="#" class="like"><i class="fa fa-heart-o"></i></a>
+            </li>
+        }
+
+    </ul><!-- /.product -->
+</div><!-- /.product-content -->
+@if (Model.pager != null && Model.pager.TotalPages > 1)
+{
+
+    <div class="product-pagination text-center clearfix">
+        <ul class="flat-pagination">
+            @if (Model.pager.CurrentPage > 1)
+            {
+                <li><a href="#" data-href="@Url.Action("FilterProducts","Shop",new { pageNo=Model.pager.StartPage,sortBy =Model.SortBy, CategoryID=Model.CategoryID})" class="pageDataLink"><i class="fa fa-angle-double-left"></i></a></li>
+
+                <li><a href="#" data-href="@Url.Action("FilterProducts","Shop",new { pageNo=Model.pager.CurrentPage-1,sortBy=Model.SortBy,categoryID=Model.CategoryID})" class="pageDataLink"><i class="fa fa-angle-left"></i></a></li>
+
+            }
+            @for (var page = Model.pager.StartPage; page <= Model.pager.EndPage; page++)
+            {
+                string activeClass = Model.pager.CurrentPage == page ? "active bg-info" : string.Empty;
+
+                <li class="@activeClass"><a href="#" data-href="@Url.Action("FilterProducts","Shop",new { pageNo=page,sortBy=Model.SortBy,categoryID=Model.CategoryID})" title="" class="pageDataLink">@page</a></li>
+            }
+
+            @if (Model.pager.CurrentPage < Model.pager.EndPage)
+            {
+                <li><a href="#" data-href="@Url.Action("FilterProducts","Shop",new { pageNo=Model.pager.CurrentPage+1,sortBy=Model.SortBy,categoryID=Model.CategoryID})" class="pageDataLink"><i class="fa fa-angle-right"></i></a></li>
+                <li><a href="#" data-href="@Url.Action("FilterProducts","Shop",new { pageNo=Model.pager.EndPage,sortBy=Model.SortBy,categoryID=Model.CategoryID})" class="pageDataLink"><i class="fa fa-angle-double-right"></i></a></li>
+            }
+
+        </ul><!-- /.flat-pagination -->
+    </div>
+}
+<div class="filter-shop clearfix">
+    <p class="showing-product float-right">
+        Showing @(((Model.pager.CurrentPage - 1) * Model.pager.PageSize) + 1)–@(((Model.pager.CurrentPage - 1) * Model.pager.PageSize) + (Model.products.Count < Model.pager.PageSize ? Model.products.Count : Model.pager.PageSize)) of @Model.pager.TotalItems Products
+    </p>
+</div><!-- /.filte-shop -->
+
+<input type="hidden" id="SortBy" value="@Model.SortBy" />
+<input type="hidden" id="CategoryID" value="@Model.CategoryID" />
+<input type="hidden" id="SerachTerm" value="@Model.SearchTerm" />
+<script>
+    $(".pageDataLink").click(function () {
+
+        var url = $(this).attr("data-href");
+        if (url != "" || url != undefined) {
+            GetData(url);
+        }
+    });
+    var products;
+    $(".ProductAddToCart").click(function () {
+
+        var existingCookieData = $.cookie('CartProducts');
+
+        if (existingCookieData != undefined && existingCookieData != "" && existingCookieData != null) {
+            products = existingCookieData.split('-');
+        }
+        else {
+            products = [];
+        }
+        var productID = $(this).attr('data-id');
+        products.push(productID);
+
+        $.cookie('CartProducts', products.join('-'), { path: '/' });
+        updateCartProductsCount();
+        swal("Done", "Product Added to Cart!", "success");
+    });
+
+</script>

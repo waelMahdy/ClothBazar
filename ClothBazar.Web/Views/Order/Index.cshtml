@@ -1,0 +1,139 @@
+﻿@model OrdersViewModels
+@{
+    ViewBag.Title = "Orders";
+}
+    <div class="form-group pull-right">
+        <div class="row">
+            <div class="col-md-4 pr-0">
+                <a class="themesflat-button bg-accent m-5" href="/Product/Index">Products</a>
+            </div>
+            <div class="col-md-4 pr-0">
+                <a class="themesflat-button bg-accent m-5" href="/Category/Index">Categories</a>
+            </div>
+        </div>
+    </div>
+<section class="flat-row flat-iconbox">
+    <div class="container">
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="title-section">
+                    <h2 class="title">Orders</h2>
+                </div>
+            </div>
+        </div>
+
+        <div id="tableContainer">
+
+            <form method="post">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label class="sr-only">Search</label>
+                            <input name="userID" id="searchTXT" class="form-control mb-2" placeholder="Search" value="@Model.UserID" />
+                        </div>
+                    </div>
+                    <div class="col-md-4 ">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-4 pr-0">
+                                    <button type="submit" value="search" id="searchBtn" class="btn btn-danger form-control">Search</button>
+                                </div>
+                                <div class="col-md-4 pr-0">
+                                    <a type="button" value="button" id="resetBtn" class="btn btn-danger form-control" href="@Url.Action("Index","Order",new {pageNo=1})">Reset</a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+
+
+
+
+
+            <div>
+
+                <table id="OrdersTable" class="table table-striped " style="width:100%">
+                    <thead>
+                        <tr>
+                            <th class="font-weight-bold">User ID</th>
+                            <th class="font-weight-bold">Total Price</th>
+                            <th class="font-weight-bold">Status</th>
+                            <td class="font-weight-bold wrap-td"></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Orders != null && Model.Orders.Count > 0)
+                        {
+
+
+                            foreach (var order in Model.Orders)
+                            {
+                        <tr>
+                            <td>@order.UserID</td>
+                            <td>
+                                @order.TotalAmount
+                            </td>
+                            @if (order.Status == "Delivered")
+                            {
+                                <td>@order.Status</td>
+                            }
+                            else
+                            {
+                                <td class="text-danger">@order.Status</td>
+                            }
+
+
+                            <td class="pull-right font-weight-bold wrap-td">
+                                <a class="btn btn-danger form-control detailsBtn  " data-id="@order.ID" href="@Url.Action("Details","Order",new {ID=order.ID })">DETAILS</a>
+                            </td>
+                        </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <rd class="text-danger" colspan="4">No Orders Found</rd>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+
+                <div>
+                    @if (Model.Pager != null && Model.Pager.TotalPages > 1)
+                    {
+
+                        if (Model.Pager.CurrentPage > 1)
+                        {
+                            <a class="pageButtons" data-pageno="1" href="@Url.Action("Index","Order",new { userID=Model.UserID,status=Model.Status,pageNo=1})">First</a>
+                            <a class="pageButtons" data-pageno="@(Model.Pager.CurrentPage - 1)" href="@Url.Action("Index","Order",new { userID=Model.UserID,status=Model.Status,pageNo=Model.Pager.CurrentPage-1})">Previous</a>
+                        }
+
+                        for (var page = Model.Pager.StartPage; page <= Model.Pager.EndPage; page++)
+                        {
+                            string activeClass = Model.Pager.CurrentPage == page ? "active bg-info" : string.Empty;
+
+                            <a class="@activeClass pageButtons" data-pageno="@page" href="@Url.Action("Index","Order",new { userID=Model.UserID,status=Model.Status,pageNo=Page})">@page</a>
+                        }
+
+                        if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+                        {
+                            <a class="pageButtons" data-pageno="@(Model.Pager.CurrentPage + 1)" href="@Url.Action("Index","Order",new { userID=Model.UserID,status=Model.Status,pageNo=Model.Pager.CurrentPage + 1})">Next</a>
+                            <a class="pageButtons" data-pageno="@Model.Pager.EndPage" href="@Url.Action("Index","Order",new { userID=Model.UserID,status=Model.Status,pageNo=Model.Pager.EndPage})">Last</a>
+                        }
+                    }
+                </div>
+                <div class="filter-shop clearfix">
+                    <p class="showing-product float-right">
+                        Showing @(((Model.Pager.CurrentPage - 1) * Model.Pager.PageSize) + 1)–@(((Model.Pager.CurrentPage - 1) * Model.Pager.PageSize) + (Model.Orders.Count < Model.Pager.PageSize ? Model.Orders.Count : Model.Pager.PageSize)) of @Model.Pager.TotalItems Orders
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>

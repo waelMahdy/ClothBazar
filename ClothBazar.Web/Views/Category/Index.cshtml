@@ -1,0 +1,46 @@
+﻿@model List<ClothBazar.Entity.Category>
+@{
+    ViewBag.Title = "Index";
+}
+<div class="form-group pull-right">
+    <div class="row">
+        <div class="col-md-4 pr-0">
+            <a class="themesflat-button bg-accent m-5" href="/Product/Index">Products</a>
+        </div>
+        <div class="col-md-4 pr-0">
+            <a class="themesflat-button bg-accent m-5" href="/Order/Index">Orders</a>
+        </div>
+    </div>
+</div>
+<section class="flat-row flat-iconbox">
+
+
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="title-section">
+                    <h2>Categories</h2>
+                </div>
+            </div>
+        </div>
+        <div id="tableContiner">
+            @{
+                Html.RenderAction("CategoryTable");
+
+            }
+
+
+        </div>
+        <hr />
+        <div id="actionContainer"></div>
+    </div>
+</section>
+<script>
+    function focusAction(controlToFocus) {
+        $('html, body').animate({
+            scrollTop: $("#" + controlToFocus).offset().top - 100
+        }, 1000);
+    }
+</script>

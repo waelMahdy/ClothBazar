@@ -1,0 +1,274 @@
+﻿@model NewProductViewModel
+@{
+    ViewBag.Title = "Create";
+     var imageURL = !string.IsNullOrEmpty(Model.ImageURL) ? Model.ImageURL : "/Content/images/system/placeholder-image.png";
+     var imageURL1 = !string.IsNullOrEmpty(Model.ImageURL1) ? Model.ImageURL1 : "/Content/images/system/placeholder-image.png";
+     var imageURL2 = !string.IsNullOrEmpty(Model.ImageURL2) ? Model.ImageURL2 : "/Content/images/system/placeholder-image.png";
+}
+<div class="container">
+    <h2>Create Product</h2>
+
+    <form id="createProduct">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="CategoryID" class="form-control">
+                        @foreach (var category in Model.AvailableCategories)
+                        {
+                            <option value="@category.ID">@category.Name</option>
+                        }
+
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Name <span class="text-danger">*</span></label>
+                    <input name="Name" class="form-control" />
+
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input name="Description" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Image</label>
+                    <input type="hidden" id="ImageURL" name="ImageURL" />
+                    <input class="form-control" id="imageUpload" name="Image" type="file" accept=".png, .jpg,.jpeg" />
+                </div>
+                <div class="form-group">
+                    <label>Image-1</label>
+                    <input type="hidden" id="ImageURL1" name="ImageURL1" />
+                    <input class="form-control" id="image1Upload" name="Image" type="file" accept=".png, .jpg,.jpeg" />
+                </div>
+                <div class="form-group">
+                    <label>Image-2</label>
+                    <input type="hidden" id="ImageURL2" name="ImageURL2" />
+                    <input class="form-control" id="image2Upload" name="Image" type="file" accept=".png, .jpg,.jpeg" />
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <input name="Price" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="thumb">
+                    <img class="img-thumbnail img-fluid" id="productImage" src="@imageURL" />
+                </div>
+                <div class="thumb">
+                    <img class="img-thumbnail img-fluid" id="productImage1" src="@imageURL1" />
+                </div>
+                <div class="thumb">
+                    <img class="img-thumbnail img-fluid" id="productImage2" src="@imageURL2" />
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="saveBtn">Create</button>
+        <button type="submit" class="btn btn-primary" id="cancelBtn">Cancel</button>
+    </form>
+
+</div>
+
+
+
+
+
+
+<script>
+     $("#imageUpload").change(function () {
+
+        var element = this;
+        var formData = new FormData();
+        var totalFiles = element.files.length;
+
+        for (var i = 0; i < totalFiles; i++)
+        {
+            var file = element.files[i];
+            formData.append("photo", file);
+        }
+
+        $.ajax({
+            type:'POST',
+            url: '@Url.Action("UploadImage","Shared")',                           //'/Shared/UploadImage',
+            dataType: 'json',
+            data: formData,
+            contentType: false,
+            processData:false
+
+        })
+            .done(function (response) {
+
+                console.log(response);
+                if (response.Success)
+                {
+                    $("#productImage").attr("src", response.ImageURL);
+
+                    $("#ImageURL").val( response.ImageURL);
+                }
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown)
+            {
+                alert("failed");
+
+
+            });
+     });
+      $("#image1Upload").change(function () {
+
+        var element = this;
+        var formData = new FormData();
+        var totalFiles = element.files.length;
+
+        for (var i = 0; i < totalFiles; i++)
+        {
+            var file = element.files[i];
+            formData.append("photo", file);
+        }
+
+        $.ajax({
+            type:'POST',
+            url: '@Url.Action("UploadImage1","Shared")',                           //'/Shared/UploadImage',
+            dataType: 'json',
+            data: formData,
+            contentType: false,
+            processData:false
+
+        })
+            .done(function (response) {
+
+                console.log(response);
+                if (response.Success)
+                {
+                    $("#productImage1").attr("src", response.ImageURL1);
+
+                    $("#ImageURL1").val( response.ImageURL1);
+                }
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown)
+            {
+                alert("failed");
+
+
+            });
+      });
+      $("#image2Upload").change(function () {
+
+        var element = this;
+        var formData = new FormData();
+        var totalFiles = element.files.length;
+
+        for (var i = 0; i < totalFiles; i++)
+        {
+            var file = element.files[i];
+            formData.append("photo", file);
+        }
+
+        $.ajax({
+            type:'POST',
+            url: '@Url.Action("UploadImage2","Shared")',                           //'/Shared/UploadImage',
+            dataType: 'json',
+            data: formData,
+            contentType: false,
+            processData:false
+
+        })
+            .done(function (response) {
+
+                console.log(response);
+                if (response.Success)
+                {
+                    $("#productImage2").attr("src", response.ImageURL2);
+
+                    $("#ImageURL2").val( response.ImageURL2);
+                }
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown)
+            {
+                alert("failed");
+
+
+            });
+     });
+     $("#createProduct").validate({
+        rules: {
+            Name: {
+                required: true,
+                minlength: 3,
+                maxlength:50
+                  },
+            Description:
+                  {
+                maxlength:500
+             },
+            Price: {
+                range:[1,10000]
+             }
+        },
+        messages: {
+            Name: {
+                required: 'Name is required',
+                minlength: 'Minimum is 3 letters',
+                maxlength:'Maximun is 50 letters',
+            },
+            Description: {
+                maxlength:'maximum is 500 letters'
+            },
+            price: {
+                range:'Price must be within 1 - 10000'
+            }
+        }
+
+    });
+
+
+
+     $("#saveBtn").click(function () {
+         if ($("#createProduct").valid())
+         {
+        $.ajax({
+            type:'POST',
+            url: '@Url.Action("Create","Product")',                     //'/Product/Create',
+            data: $("#createProduct").serialize()
+        })
+            .done(function (response) {
+                $("#tableContainer").html(response);
+
+                 $("#actionContainer").html("");
+                focusAction("tableContiner");
+                 swal("Poof! Your Product has been Added!", {
+                                icon: "success",
+                            });
+              
+                //location.reload(true);
+                
+
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                swal({
+					title: "Warning",
+					text: "Please enter all required fields.",
+					icon: "warning",
+					buttons: true,
+					dangerMode: true,
+				});
+
+
+            });
+         }
+         else {
+            focusAction("actionContainer");
+			swal({
+				title: "Warning",
+				text: "Please enter all valid data in fields.",
+				icon: "warning",
+				buttons: true,
+				dangerMode: true,
+			});
+		}
+     });
+    $("#cancelBtn").click(function () {
+          focusAction("site-header-wrap");
+		$("#actionContainer").html("");
+
+	});
+
+</script>

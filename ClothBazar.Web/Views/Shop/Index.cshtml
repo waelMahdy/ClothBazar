@@ -1,0 +1,216 @@
+﻿@using ClothBazar.Web.Code
+@model ShopViewModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<!-- Page title -->
+<div class="page-title parallax parallax1">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-title-heading">
+                    <h1 class="title">SHOP</h1>
+
+                </div><!-- /.col-md-12 -->
+            </div><!-- /.row -->
+        </div><!-- /.container -->
+    </div><!-- /.page-title -->
+</div>
+<section class="flat-row main-shop shop-slidebar">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="sidebar slidebar-shop">
+                    <div class="widget widget-search">
+                        <form role="search" method="get" class="search-form" action="@Url.Action("Index", "Shop")">
+                            <label>
+                                <input type="search" class="search-field" placeholder="Search …" value="@Model.SearchTerm" name="searchTerm">
+                            </label>
+                            <input type="submit" class="search-submit" value="Search">
+                        </form>
+                    
+                    </div><!-- /.widget-search -->
+                    <div class="widget widget-sort-by">
+                        <h5 class="widget-title">
+                            Sort By
+                        </h5>
+                        <ul>
+                            <li><a href="#" data-href="@Url.Action("FilterProducts", "shop", new { sortBy = (int)SortByEnums.Default, CategoryID = Model.CategoryID })" class="@(Model.SortBy.HasValue ? Model.SortBy.Value == (int)SortByEnums.Default ? "active" : string.Empty : string.Empty) dataLink ">Default -Newest</a></li>
+                            <li><a href="#" data-href="@Url.Action("FilterProducts", "shop", new { sortBy = (int)SortByEnums.Popularity, CategoryID=Model.CategoryID })" class="@(Model.SortBy.HasValue ? Model.SortBy.Value == (int)SortByEnums.Popularity ? "active" : string.Empty : string.Empty) dataLink ">Popularity</a></li>
+                            <li><a href="#" data-href="@Url.Action("FilterProducts", "shop", new { sortBy = (int)SortByEnums.PriceLowToHigh, CategoryID=Model.CategoryID })" class="@(Model.SortBy.HasValue ? Model.SortBy.Value == (int)SortByEnums.PriceLowToHigh ? "active" : string.Empty : string.Empty) dataLink ">Price: low to high</a></li>
+                            <li><a href="#" data-href="@Url.Action("FilterProducts", "shop", new { sortBy = (int)SortByEnums.PriceHighToLow, CategoryID=Model.CategoryID })" class="@(Model.SortBy.HasValue ? Model.SortBy.Value == (int)SortByEnums.PriceHighToLow ? "active" : string.Empty : string.Empty) dataLink ">Price: high to low</a></li>
+                        </ul>
+                    </div><!-- /.widget-sort-by -->
+
+                    <div class="widget widget-price">
+                        <h5 class="widget-title">Filter by price</h5>
+                        <div class="price-filter">
+                            <div id="slide-range"></div>
+                            <p class="amount">
+                                Price: <input type="text" id="amount" disabled="">
+                            </p>
+                        </div>
+                    </div>
+                    <div class="widget widget_tag">
+                        <h5 class="widget-title">
+                            Featured Categories
+                        </h5>
+                        <div class="tag-list">
+                            <ul>
+                                @foreach (var category in Model.Categories)
+                                {
+                                <li> <a href="#" data-href="@Url.Action("FilterProducts", "Shop", new { categoryID = category.ID,sortBy=Model.SortBy,pageNo=Model.pager.CurrentPage })" class="@(Model.CategoryID.HasValue && Model.CategoryID.Value==category.ID ? "active" :string.Empty) dataLink" data-id="@category.ID">@category.Name</a></li>
+                                }
+                            </ul>
+                        </div>
+                    </div><!-- /.widget -->
+                    <a href="@Url.Action("Index","Shop")" class="btn btn-danger">Rest Filters </a>
+                </div><!-- /.sidebar -->
+            </div><!-- /.col-md-3 -->
+            <div class="col-md-9">
+                <div id="productsDIV">
+                    @{
+                        var filterProductsViewModel = new FilterProductsViewModel();
+                        filterProductsViewModel.products = Model.products;
+                        filterProductsViewModel.pager = Model.pager;
+                        filterProductsViewModel.CategoryID = Model.CategoryID;
+                        filterProductsViewModel.SortBy = Model.SortBy;
+                        filterProductsViewModel.SearchTerm = Model.SearchTerm;
+
+                        Html.RenderAction("FilterProducts", filterProductsViewModel);
+                    }
+                </div>
+
+                <div id="products">
+                    @*<div class="product-content product-threecolumn product-slidebar clearfix">
+                            <ul class="product style2 sd1">
+                                @foreach (var product in Model.products)
+                                {
+                                    var ImageURL = string.IsNullOrEmpty(product.ImageURL) ? DefaultImageURL : product.ImageURL;
+                                    <li class="product-item">
+                                        <div class="product-thumb clearfix">
+                                            <a href="@Url.Action("Details","Product",new {ID=product.ID })">
+                                                <img src="@ImageURL" alt="image" style="height:35vh">
+                                            </a>
+
+                                        </div>
+                                        <div class="product-info clearfix"><br />
+                                            <span class="product-title">@product.Name</span>
+                                            <div class="price">
+                                                <ins>
+                                                    <span class="amount">$@product.Price</span>
+                                                </ins>
+                                            </div>
+                                        </div>
+                                        <div class="add-to-cart text-center">
+                                            <a href="#">ADD TO CART</a>
+                                        </div>
+                                        <a href="#" class="like"><i class="fa fa-heart-o"></i></a>
+                                    </li>
+                                }
+
+                            </ul><!-- /.product -->
+                        </div>*@<!-- /.product-content -->
+                    <div class="product-pagination text-center clearfix">
+                        @*<ul class="flat-pagination">
+                                @if (Model.pager.CurrentPage > 1)
+                                {
+                                    <li><a data-href="@Url.Action("Index","Shop",new { pageNo=Model.pager.StartPage,sortBy =Model.SortBy, CategoryID=Model.CategoryID})" class="dataLink"><i class="fa fa-angle-double-left"></i></a></li>
+
+                                    <li><a data-href="@Url.Action("Index","Shop",new { pageNo=Model.pager.CurrentPage-1,sortBy=Model.SortBy,categoryID=Model.CategoryID})" class="dataLink"><i class="fa fa-angle-left"></i></a></li>
+
+                                }
+                                @for (var page = Model.pager.StartPage; page <= Model.pager.EndPage; page++)
+                                {
+                                    string activeClass = Model.pager.CurrentPage == page ? "active bg-info" : string.Empty;
+
+                                    <li class="@activeClass"><a href="@Url.Action("Index","Shop",new { pageNo=page,sortBy=Model.SortBy,categoryID=Model.CategoryID})" title="" class="dataLink">@page</a></li>
+                                }
+
+                                @if (Model.pager.CurrentPage < Model.pager.EndPage)
+                                {
+                                    <li><a data-href="@Url.Action("Index","Shop",new { pageNo=Model.pager.CurrentPage+1,sortBy=Model.SortBy,categoryID=Model.CategoryID})" class="dataLink"><i class="fa fa-angle-right"></i></a></li>
+                                    <li><a data-href="@Url.Action("Index","Shop",new { pageNo=Model.pager.EndPage,sortBy=Model.SortBy,categoryID=Model.CategoryID})" class="dataLink"><i class="fa fa-angle-double-right"></i></a></li>
+                                }
+
+                            </ul>*@<!-- /.flat-pagination -->
+                    </div>
+                </div>
+            </div><!-- /.col-md-9 -->
+        </div><!-- /.row -->
+    </div><!-- /.container -->
+
+</section><!-- /.flat-row -->
+
+<script>
+    var callTimeout;
+    var priceSlider = $("#slide-range").slider({
+        range: true,
+        min: 0,
+        max:3000,
+        values: [0,  3000],
+        slide: function (event, ui) {
+            var minPrice = ui.values[0];
+            var maxPrice = ui.values[1];
+
+            $("#amount").val("$" + minPrice + " - " + "$" + maxPrice);
+
+            clearTimeout(callTimeout);
+             callTimeout = setTimeout(PriceRangeChange, 2000);
+
+
+        }
+    });
+    $(".dataLink").click(function () {
+        var url = $(this).attr("data-href");
+        if (url != "" || url != undefined) {
+            GetData(url);
+          }
+    });
+    function GetData(dUrl) {
+        //showloader();
+        $.ajax({
+            url: dUrl,
+            data: {
+                minimumPrice: priceSlider.slider("values", 0),
+                maximumPrice: priceSlider.slider("values", 1),
+            }
+
+        })
+
+            .done(function (response) {
+                $("#productsDIV").html(response);
+            })
+            .fail(function (XMLHttpRequest, textStaus, errorThrown) {
+                alert("FAIL");
+            })
+            //.always(function () {
+            //    hideloader();
+            //});
+    }
+    function PriceRangeChange() {
+        $.ajax({
+
+            url:'@Url.Action("FilterProducts","Shop")',
+            data: {
+                searchTerm: $("#SerachTerm").val(),
+                categoryID: $("#CategoryID").val(),
+                sortBy: $("#SortBy").val(),
+                minimumPrice: priceSlider.slider("values", 0),
+                maximumPrice: priceSlider.slider("values", 1),
+            }
+
+        })
+
+        .done(function (response) {
+            $("#productsDIV").html(response);
+            $("#products").html('');
+            console.log("Data called");
+        })
+        .fail(function (XMLHttpRequest, textStaus, errorThrown) {
+            alert("FAIL");
+        });
+
+    }
+</script>

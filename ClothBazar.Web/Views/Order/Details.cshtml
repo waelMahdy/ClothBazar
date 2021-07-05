@@ -1,0 +1,169 @@
+﻿
+@model OrderDetailsViewModels
+
+@{
+    ViewBag.Title = "Order Details";
+}
+<div class="flat-row main-shop shop-slidebar">
+    <div class="container">
+        <div class="row" wfd-id="6">
+            @if (Model != null && Model.Order != null)
+            {
+                <div class="col-md-4 order-md-2 mb-4" wfd-id="69">
+                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted title" wfd-id="89"><strong>Order Products Details</strong></span>
+                        <span class="badge badge-secondary badge-pill" wfd-id="88">3</span>
+                    </h4>
+
+                    <ul class="list-group mb-3" wfd-id="73" style="width:100%">
+                        @foreach (var orderItem in Model.Order.OrderItems)
+                        {
+                            <li class="list-group-item d-flex justify-content-between lh-condensed" wfd-id="85" data-id="@orderItem.ID">
+                                <ul style="width:100%">
+                                    <li>
+                                        <div wfd-id="87">
+                                            <h6 class="my-0 title">@orderItem.Product.Name  <span class="badge badge-pill badge-danger">Qty @orderItem.Quantity  item(s)</span></h6>
+                                            <small class="text-muted">@(orderItem.Product.Description.Length > 100 ? orderItem.Product.Description.Substring(0, 99) : orderItem.Product.Description)</small>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <span class="text-muted" wfd-id="86">unit price: $@orderItem.Product.Price</span>
+                                        <div class="pull-right"> <a href="@orderItem.Product.ImageURL" target="_blank"><img src="@orderItem.Product.ImageURL" width="40" /></a></div>
+
+                                    </li>
+                                    <li>
+                                        <span class="text-muted" wfd-id="86">total price:$@(orderItem.Quantity * orderItem.Product.Price)</span>
+                                    </li>
+                                </ul>
+                            </li>
+
+                        }
+
+                        <li class="list-group-item d-flex justify-content-between" wfd-id="74">
+                            <span wfd-id="75">Total (USD)</span>
+                            <strong>$ @Model.Order.TotalAmount</strong>
+                        </li>
+                    </ul>
+
+                </div>
+                <div class="col-md-8 order-md-1" wfd-id="7">
+
+                    <h4 class="mb-3 title-section"><string>User's Billing address</string></h4>
+                    <form class="needs-validation" novalidate="" wfd-id="8">
+                        <div class="row" wfd-id="62">
+                            <div class="col-md-12 mb-3" wfd-id="66">
+                                <label for="firstName" wfd-id="68">Name</label>
+                                <input type="text" class="form-control" id="Name" placeholder="" value="@Model.OrderBy.Name" required="" wfd-id="106">
+                            </div>
+
+                        </div>
+
+                        <div class="mb-3" wfd-id="52">
+                            <label for="email" wfd-id="54">Email <span class="text-muted" wfd-id="55">(Optional)</span></label>
+                            <input type="email" class="form-control" id="email" placeholder="you@example.com" wfd-id="103" value="@Model.OrderBy.Email">
+                        </div>
+
+
+                        <div class="mb-3" wfd-id="49">
+                            <label for="address" wfd-id="51">Address</label>
+                            <input type="text" class="form-control" id="address" placeholder="1234 Main St" required="" wfd-id="102" value="@Model.OrderBy.Address">
+                        </div>
+                        <div class="mb-3" wfd-id="49">
+                            <label for="address" wfd-id="51">Status</label>
+                            <select name="Status" id="changeStatus">
+                                @foreach (var availableStatus in Model.AvailableStatuses)
+                                {
+                                    var isSelectedStatus = availableStatus == Model.Order.Status;
+                                    <option @(isSelectedStatus ? "selected" : string.Empty)>@availableStatus</option>
+                                }
+                            </select>
+                        </div>
+
+                    </form>
+
+                </div>
+<script>
+    $("#changeStatus").change(function () {       
+        $.ajax({
+
+            url: '@Url.Action("ChangeStatus","Order")',
+            data:
+            {
+                status: $("#changeStatus").val(),
+                ID: '@Model.Order.ID'
+            }
+        })
+            .done(function (response) {
+                if (response.Success)
+                {
+                    swal("Done", "your order has been updated", "success").then((value) => {
+                        window.location = '@Url.Action("Index","Order")';
+                    })
+
+                }
+                else
+                {
+                    swal("Failed", "Unable to update Order", "warning");
+                }
+             
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("failed");
+
+
+            });
+  
+    });
+</script>
+
+
+            }
+            else
+            {
+                <div class="text-danger">ORDER DETAILS NOT AVAILABLE</div>
+            }
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*<h2>Checkout</h2>
+    @if (Model != null)
+    {
+        if (Model.CartProducts != null && Model.CartProducts.Count > 0)
+        {<div>
+                @foreach (var product in Model.CartProducts)
+                {
+                    var productQuentity = Model.CartProductsIDs.Where(productID => productID == product.ID).Count();
+                    <div>
+                       Name: @product.Name-  Price :@product.Price-  Quantity:@productQuentity  Total Price:@(product.Price*productQuentity)
+                    </div>
+                }
+            </div>
+            <div>
+                Total Bill:@Model.CartProducts.Sum(x => x.Price);
+            </div>
+        }
+        else
+        {
+            <div class="text-danger">No Products in cart</div>
+        }
+    }*@

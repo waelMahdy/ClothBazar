@@ -1,0 +1,323 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Basic Page Needs -->
+    <meta charset="utf-8">
+    <!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
+    <title>@ViewBag.Title- Black Hat</title>
+
+
+
+    <!-- Mobile Specific Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- Bootstrap  -->
+    <link rel="stylesheet" type="text/css" href="~/Content/stylesheets/bootstrap.css">
+
+    <!-- Theme Style -->
+    <link rel="stylesheet" type="text/css" href="~/Content/stylesheets/style.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/stylesheets/responsive.css">
+
+    <!-- Colors -->
+    <link rel="stylesheet" type="text/css" href="~/Content/stylesheets/colors/color1.css" id="colors">
+
+    <!-- Animation Style -->
+    <link rel="stylesheet" type="text/css" href="~/Content/stylesheets/animate.css">
+
+
+    <!-- Favicon and touch icons  -->
+    <link href="~/Content/images/hat.png" rel="icon" type="image/x-icon">
+
+    <script src="~/content/javascript/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+    <script src="~/content/javascript/jquery-ui.js"></script>
+
+    <!--[if lt IE 9]>
+        <script src="~/Content/javascript/html5shiv.js"></script>
+        <script src="~/Content/javascript/respond.min.js"></script>
+    <![endif]-->
+    @*<meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>@ViewBag.Title - My ASP.NET Application</title>
+        @Styles.Render("~/Content/css")
+        @Scripts.Render("~/bundles/modernizr")
+        @Scripts.Render("~/bundles/jquery")*@
+</head>
+<body class="header_sticky header-style-2 has-menu-extra">
+    <!-- Preloader -->
+    <div id="loading-overlay">
+        <div class="loader"></div>
+    </div>
+    <div class="boxed">
+        <div id="site-header-wrap">
+            <!-- Header -->
+            <header id="header" class="header clearfix">
+                <div class="container-fluid clearfix container-width-93" id="site-header-inner">
+                    <div @*id="logo"*@ class="logo float-left">
+                        <div class="wow fadeInUp fadeOutDown" data-wow-duration="3s" data-wow-iteration="10">
+                            <a href="@Url.Action("Index","Home")" title="logo">
+                                <img src="~/Content/images/hat.png" alt="image" width="99" data-retina="~/Content/images/logo.png" data-width="107" data-height="24">
+
+                            </a>
+                        </div>
+                    </div><!-- /.logo -->
+
+                    <div class="mobile-button"><span></span></div>
+                    <ul class="menu-extra">
+                        <li class="box-search">
+                            <a class="icon_search header-search-icon" href="#"></a>
+                            <form role="search" method="get" class="header-search-form" action="@Url.Action("Index", "Shop")">
+                                <input type="text" name="searchTerm" class="header-search-field" placeholder="Search...">
+                                <button type="submit" class="header-search-submit" title="Search">Search</button>
+                            </form>
+                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                    <li class="box-login nav-top-cart-wrapper">
+                        <a class="icon_login nav-cart-trigger active" href="@Url.Action("login","Account")">  </a>
+                        <div class="nav-shop-cart">
+                            <div class="widget_shopping_cart_content">
+                                <div class="woocommerce-min-cart-wrap">
+                                    <ul class="woocommerce-mini-cart cart_list product_list_widget ">
+                                        <li class="woocommerce-mini-cart-item1 mini_cart_item1">
+                                            @*<span>Welcome @User.Identity.Name</span>*@
+                                            @using Microsoft.AspNet.Identity
+                                            @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                                            {
+                                                @Html.AntiForgeryToken()
+
+                                                <ul class="nav navbar-nav navbar-right">
+                                                    <li>
+                                                        @Html.ActionLink("Welcome " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+                                                    </li>
+                                                    <li><a href="javascript:document.getElementById('logoutForm').submit()">Logoff</a></li>
+                                                </ul>
+                                            }
+                                        </li>
+
+                     
+                                    </ul>
+                                </div> <!-- /.widget_login -->
+                            </div>
+                        </div>  <!-- /nav-login -->
+
+                    </li>
+
+                        }
+                        else
+                        {
+
+                    <li class="box-login nav-top-cart-wrapper">
+                        <a class="icon_login nav-cart-trigger active" href="@Url.Action("login","Account")">  </a>
+                        <div class="nav-shop-cart">
+                            <div class="widget_shopping_cart_content">
+                                <div class="woocommerce-min-cart-wrap">
+                                    <ul class="woocommerce-mini-cart cart_list product_list_widget ">
+                                        <li class="woocommerce-mini-cart-item mini_cart_item1">
+                                            <span>Login</span>
+                                        </li>
+                                    </ul>
+                                </div> <!-- /.widget_login -->
+                            </div>
+                        </div> <!-- /.nav-login -->
+
+                    </li>
+
+
+                        }
+
+                        <li class="box-cart nav-top-cart-wrapper">
+                            <a class="icon_cart nav-cart-trigger active" href="@Url.Action("Checkout","Shop")"><span id="cartProductsCount">0</span></a>
+                            <div class="nav-shop-cart">
+                                <div class="widget_shopping_cart_content">
+                                    <div class="woocommerce-min-cart-wrap">
+                                        <ul class="woocommerce-mini-cart cart_list product_list_widget ">
+                                            <li class="woocommerce-mini-cart-item mini_cart_item">
+                                                <span class="text-danger">No Items in Shopping Cart</span>
+                                            </li>
+                                        </ul>
+                                    </div><!-- /.widget_shopping_cart_content -->
+                                </div>
+                            </div><!-- /.nav-shop-cart -->
+                        </li>
+                    </ul><!-- /.menu-extra -->
+
+                    <div class="nav-wrap">
+                        <nav id="mainnav" class="mainnav">
+                            <ul class="menu">
+                                <li>
+                                    <a href="@Url.Action("Index","Home")">HOME</a>
+
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Index","Shop")">SHOP</a>
+
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Checkout","Shop")">CHECKOUT</a>
+
+                                </li>
+                                @*<li>
+                                        <a href="blog-list.html">BLOG</a>
+
+                                    </li>
+                                    <li>
+                                        <a href="contact.html">CONTACT</a>
+
+                                    </li>*@
+                            </ul>
+                        </nav><!-- /.mainnav -->
+                    </div><!-- /.nav-wrap -->
+                </div><!-- /.container-fluid -->
+            </header><!-- /header -->
+        </div><!-- /.site-header-wrap -->
+        @RenderBody()
+
+        <section class="flat-row mail-chimp" wfd-id="48">
+            <div class="container" wfd-id="49">
+                <div class="row" wfd-id="50">
+                    <div class="col-md-4" wfd-id="63">
+                        <div class="text" wfd-id="64">
+                            <h3>Sign up for Send Newsletter</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-8" wfd-id="51">
+                        <div class="subscribe clearfix" wfd-id="52">
+                            <form action="#" method="post" accept-charset="utf-8" id="subscribe-form" wfd-id="59">
+                                <div class="subscribe-content" wfd-id="60">
+                                    <div class="input" wfd-id="62">
+                                        <input type="email" name="subscribe-email" placeholder="Your Email" wfd-id="356">
+                                    </div>
+                                    <div class="button" wfd-id="61">
+                                        <button type="button" wfd-id="359">SUBCRIBE</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <ul class="flat-social" wfd-id="53">
+
+                                <li wfd-id="58"><a href="@ConfigurationsService.Instance.GetConfig("FaceBookURL").Value" target="_blank"><i class="fa fa-facebook"></i></a></li>
+                                <li wfd-id="57"><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                <li wfd-id="56"><a href="#"><i class="fa fa-google"></i></a></li>
+                                <li wfd-id="55"><a href="#"><i class="fa fa-behance"></i></a></li>
+                                <li wfd-id="54"><a href="@ConfigurationsService.Instance.GetConfig("LinkedIn").Value" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+                            </ul><!-- /.flat-social -->
+                        </div><!-- /.subscribe -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="widget widget-link">
+                            <ul>
+                                <li><a href="#">About Us</a></li>
+                                <li><a href="@Url.Action("Index","Shop")">Online Store</a></li>
+                                <li><a href="blog-list.html">Blog</a></li>
+                                <li><a href="contact.html">Contact Us</a></li>
+                            </ul>
+                        </div><!-- /.widget -->
+                    </div><!-- /.col-md-3 -->
+                    <div class="col-md-3">
+                        <div class="widget widget-link link-login">
+                            <ul>
+                                <li><a href="@Url.Action("login","Account")">Login/ Register</a></li>
+                                <li><a href="@Url.Action("Checkout","Shop")">Your Cart</a></li>
+                                <li><a href="#">Wishlist items</a></li>
+                                <li><a href="@Url.Action("Checkout","Shop")">Your checkout</a></li>
+                            </ul>
+                        </div><!-- /.widget -->
+                    </div><!-- /.col-md-3 -->
+                    <div class="col-md-3">
+                        <div class="widget widget-link link-faq">
+                            <ul>
+                                <li><a href="faqs.html">FAQs</a></li>
+                                <li><a href="#">Term of service</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a href="#">Returns</a></li>
+                            </ul>
+                        </div><!-- /.widget -->
+                    </div><!-- /.col-md-3 -->
+                    <div class="col-md-3">
+                        <div class="widget widget-brand">
+                            <div class="logo logo-footer">
+                                <a href="index.html"><img src="~/Content/images/hat.png" alt="image" width="50"></a>
+                            </div>
+                            <ul class="flat-contact">
+                                <li class="address">@ConfigurationsService.Instance.GetConfig("CompanyAddress").Value</li>
+                                <li class="phone">@ConfigurationsService.Instance.GetConfig("CompanyPhone").Value</li>
+                                <li class="email">waelmahdy001@gmail.com</li>
+                            </ul><!-- /.flat-contact -->
+                        </div><!-- /.widget -->
+                    </div><!-- /.col-md-3 -->
+                </div><!-- /.row -->
+            </div><!-- /.container -->
+        </footer><!-- /.footer -->
+
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p class="copyright text-center">Copyright 2019 <a href="http://waelmahdy.com/" target="_blank" class="text-danger">Wael Mahdy</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Go Top -->
+        <a class="go-top">
+            <i class="fa fa-chevron-up"></i>
+        </a>
+
+    </div>
+
+    <!-- Javascript -->
+
+    <script src="~/content/javascript/tether.min.js"></script>
+    <script src="~/content/javascript/bootstrap.min.js"></script>
+    <script src="~/content/javascript/jquery.easing.js"></script>
+    <script src="~/content/javascript/parallax.js"></script>
+    <script src="~/content/javascript/jquery-waypoints.js"></script>
+    <script src="~/content/javascript/jquery-countTo.js"></script>
+    <script src="~/content/javascript/jquery.countdown.js"></script>
+    <script src="~/content/javascript/jquery.flexslider-min.js"></script>
+    <script src="~/content/javascript/images-loaded.js"></script>
+    <script src="~/content/javascript/jquery.isotope.min.js"></script>
+    <script src="~/content/javascript/magnific.popup.min.js"></script>
+    <script src="~/content/javascript/jquery.hoverdir.js"></script>
+    <script src="~/content/javascript/owl.carousel.min.js"></script>
+    <script src="~/content/javascript/equalize.min.js"></script>
+    <script src="~/content/javascript/gmap3.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAIEU6OT3xqCksCetQeNLIPps6-AYrhq-s&region=GB"></script>
+    <script src="~/content/javascript/jquery-ui.js"></script>
+    <script src="~/Scripts/wow.min.js"></script>
+    <script src="~/content/javascript/jquery.cookie.js"></script>
+    <script src="~/content/javascript/main.js"></script>
+
+    <!-- Revolution Slider -->
+    <script src="~/content/rev-slider/js/jquery.themepunch.tools.min.js"></script>
+    <script src="~/content/rev-slider/js/jquery.themepunch.revolution.min.js"></script>
+    <script src="~/content/javascript/rev-slider.js"></script>
+    <!-- Load Extensions only on Local File Systems ! The following part can be removed on Server for On Demand Loading -->
+    <script src="~/content/rev-slider/js/extensions/revolution.extension.actions.min.js"></script>
+    <script src="~/content/rev-slider/js/extensions/revolution.extension.carousel.min.js"></script>
+    <script src="~/content/rev-slider/js/extensions/revolution.extension.kenburn.min.js"></script>
+    <script src="~/content/rev-slider/js/extensions/revolution.extension.layeranimation.min.js"></script>
+    <script src="~/content/rev-slider/js/extensions/revolution.extension.migration.min.js"></script>
+    <script src="~/content/rev-slider/js/extensions/revolution.extension.navigation.min.js"></script>
+    <script src="~/content/rev-slider/js/extensions/revolution.extension.parallax.min.js"></script>
+    <script src="~/content/rev-slider/js/extensions/revolution.extension.slideanims.min.js"></script>
+    <script src="~/content/rev-slider/js/extensions/revolution.extension.video.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script>
+        new WOW().init();
+    </script>
+</body>
+</html>

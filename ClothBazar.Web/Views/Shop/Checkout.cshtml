@@ -1,0 +1,232 @@
+﻿@model ClothBazar.Web.ViewModels.CheckoutViewModel
+@{
+    ViewBag.Title = "Checkout";
+}
+<div class="flat-row main-shop shop-slidebar">
+    <div class="container">
+        <div class="row" wfd-id="6">
+            @if (Model.CartProducts != null && Model.CartProducts.Count > 0 && Model.CartProducts != null)
+            {
+                <div class="col-md-4 order-md-2 mb-4" wfd-id="69">
+                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted title" wfd-id="89"><strong>Your cart</strong></span>
+                        <span class="badge badge-secondary badge-pill" wfd-id="88">3</span>
+                    </h4>
+
+                    <ul class="list-group mb-3" wfd-id="73" style="width:100%">
+                        @foreach (var product in Model.CartProducts)
+                        {
+                            var productQuentity = Model.CartProductsIDs.Where(productID => productID == product.ID).Count();
+                            <li class="list-group-item d-flex justify-content-between lh-condensed" wfd-id="85" data-id="@product.ID">
+                                <ul style="width:100%">
+                                    <li>
+                                        <div class="pull-right"> <a href="@product.ImageURL" target="_blank"><img src="@product.ImageURL" width="40" /></a></div>
+                                        <div wfd-id="87">
+                                            <h6 class="my-0 title"><strong>@product.Name </strong> </h6> <span class="badge badge-pill badge-danger pull-right">Qty @productQuentity  item(s)</span>
+
+                                            <small class="text-muted">@(product.Description.Length > 100 ? product.Description.Substring(0, 99) : product.Description)</small>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <span class="text-muted" wfd-id="86"><strong>unit price:</strong> $@product.Price</span>
+                                        
+                                    </li>
+                                    <li>
+                                        <span class="text-muted" wfd-id="86"><strong>total price:</strong>$@(productQuentity * product.Price)</span>
+                                        <div class="pull-right">
+                                            <button type="button" class="btn btn-outline-danger btn-xs ">
+                                                <i class="fa fa-plus-square AddToCart" data-id="@product.ID"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger btn-xs ">
+                                                <i class="fa fa-minus-square removeFromCart" data-id="@product.ID"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger btn-xs ">
+                                                <i class="fa fa-trash deleteFromCart" aria-hidden="true" data-id="@product.ID"></i>
+                                            </button>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+
+                        }
+
+                        <li class="list-group-item d-flex justify-content-between" wfd-id="74">
+                            <span wfd-id="75"><strong>Total (USD)</strong></span>
+                            <strong>$ @Model.CartProducts.Sum(x => x.Price * Model.CartProductsIDs.Where(productID => productID == x.ID).Count())</strong>
+                        </li>
+                    </ul>
+
+                </div>
+                <div class="col-md-8 order-md-1" wfd-id="7">
+                    @if (Model.User != null)
+                    {
+                        <h4 class="mb-3 title-section"><string>Billing address</string></h4>
+                        <form class="needs-validation" novalidate="" wfd-id="8">
+                            <div class="row" wfd-id="62">
+                                <div class="col-md-12 mb-3" wfd-id="66">
+                                    <label for="firstName" wfd-id="68">Name</label>
+                                    <input type="text" class="form-control" id="Name" placeholder="" value="@Model.User.Name" required="" wfd-id="106">
+                                </div>
+
+                            </div>
+
+                            <div class="mb-3" wfd-id="52">
+                                <label for="email" wfd-id="54">Email <span class="text-muted" wfd-id="55">(Optional)</span></label>
+                                <input type="email" class="form-control" id="email" placeholder="you@example.com" wfd-id="103" value="@Model.User.Email">
+                            </div>
+
+
+                            <div class="mb-3" wfd-id="49">
+                                <label for="address" wfd-id="51">Address</label>
+                                <input type="text" class="form-control" id="address" placeholder="1234 Main St" required="" wfd-id="102" value="@Model.User.Address">
+
+                                <kpm-button class="kpm_input-field-button kpm_green-key-icon kpm_address-button" style="z-index: 3 !important;">
+                                    <svg width="12" height="24" class="kpm_reset" viewBox="196 276 8 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="top: -31px !important; left: 583px !important; width: 12px !important; height: 24px !important;">
+                                        <path d="M202.012,283.439v6.41h0l-1.971,2.278-2.111-2.139,1.255-1.482-1.193-.889V286.51l1.006-1.046-1.006-1.076v-0.949A4,4,0,1,1,202.012,283.439ZM200,278a1,1,0,1,0,1,1A1,1,0,0,0,200,278Zm1.006,7.7a0.5,0.5,0,1,0-1.006,0v3.533a0.5,0.5,0,1,0,1.006,0V285.7Z">
+                                        </path>
+                                    </svg>
+                                </kpm-button>
+                            </div>
+
+
+
+                            <button id="PlaceOrderBtn" class="btn btn-primary btn-lg btn-block" type="button" wfd-id="110">Place order!</button>
+                        </form>
+                    }
+                    else
+                    { <div class="text-danger">PLEASE SIGN IN TO COMPLETE THE PLACE YOUR ORDER</div>}
+                </div>
+
+
+                <script>
+    $("#PlaceOrderBtn").click(function () {
+        $.ajax({
+
+            url:'@Url.Action("PlaceOrder","Shop")',
+            data: {
+                productsIDs:'@string.Join("-",Model.CartProductsIDs)'
+
+            }
+        })
+            .done(function (response) {
+                if (response.Success) {
+                    $.cookie('CartProducts', '', { path: '/' });
+                      updateCartProductsCount();
+
+                    swal("Done", "your order has been placed", "success").then((value) => {
+                        window.location = '@Url.Action("Index","Shop")';
+                    })
+                }
+                else
+                {
+
+
+                     swal("Failed", "unable to place order", "warning");
+                }
+
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("failed");
+
+
+            });
+    });
+                </script>
+
+            }
+            else
+            {
+                <div class="text-danger">NO ITEMS IN CART</div>
+            }
+        </div>
+
+    </div>
+</div>
+
+<script>
+     var products;
+    $(".AddToCart").click(function () {
+
+        var existingCookieData = $.cookie('CartProducts');
+
+        if (existingCookieData != undefined && existingCookieData != "" && existingCookieData != null) {
+            products = existingCookieData.split('-');
+        }
+        else {
+            products = [];
+        }
+        var productID = $(this).attr('data-id');
+        products.push(productID)
+
+        $.cookie('CartProducts', products.join('-'), { path: '/' });
+        updateCartProductsCount();
+          swal("Done", "Product has been added", "success").then((value) => {
+                        window.location = '@Url.Action("Checkout","Shop")';  })
+    });
+
+     $(".removeFromCart").click(function () {
+
+        var existingCookieData = $.cookie('CartProducts');
+
+        if (existingCookieData != undefined && existingCookieData != "" && existingCookieData != null) {
+            products = existingCookieData.split('-');
+        }
+        else {
+            products = [];
+        }
+        var productID = $(this).attr('data-id');
+         var index = products.indexOf(productID);
+         products.splice(index, 1);
+        $.cookie('CartProducts', products.join('-'), { path: '/' });
+        updateCartProductsCount();
+          swal("Done", "Product has been removed", "success").then((value) => {
+                        window.location = '@Url.Action("Checkout","Shop")';  })
+     });
+
+
+
+     $(".deleteFromCart").click(function () {
+
+        var existingCookieData = $.cookie('CartProducts');
+
+             if (existingCookieData != undefined && existingCookieData != "" && existingCookieData != null)
+             {
+            products = existingCookieData.split('-');
+             }
+             else
+             {
+            products = [];
+             }
+             var productID = $(this).attr('data-id');
+
+             for (let i = 0; i < products.length; ++i)
+             {
+                
+                 if (products[i] === productID)
+                 { var index = products.indexOf(productID);
+                     console.log(productID);
+                      products.splice(index);
+                 }
+             }
+
+        $.cookie('CartProducts', products.join('-'), { path: '/' });
+        updateCartProductsCount();
+          swal("Done", "Product has been removed", "success").then((value) => {
+                        window.location = '@Url.Action("Checkout","Shop")';  })
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
